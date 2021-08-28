@@ -1,0 +1,86 @@
+#Estudiante Nestor Zapata
+import cv2
+import sys
+import os
+import numpy as np
+
+# lectura de imagen
+image = cv2.imread(r"C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/huellas/01/01_2.tif")
+image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+image_gray_fft = np.fft.fft2(image_gray)
+image_gray_fft_shift = np.fft.fftshift(image_gray_fft)
+
+    # fft visualization
+image_gray_fft_mag = np.absolute(image_gray_fft_shift)
+image_fft_view = np.log(image_gray_fft_mag + 1)
+image_fft_view = image_fft_view / np.max(image_fft_view)
+
+    # pre-computations
+num_rows, num_cols = (image_gray.shape[0], image_gray.shape[1])
+enum_rows = np.linspace(0, num_rows - 1, num_rows)
+enum_cols = np.linspace(0, num_cols - 1, num_cols)
+col_iter, row_iter = np.meshgrid(enum_cols, enum_rows)
+half_size = num_rows / 2
+    # oriented-based filter mask
+theta = 0
+delta_theta = 5
+theta2 = 45
+delta_theta2 = 5
+theta3 = 90
+delta_theta3 = 5
+theta4 = 135
+delta_theta4 = 5
+orientation_mask = np.zeros_like(image_gray)
+orientation_mask2 = np.zeros_like(image_gray)
+orientation_mask3= np.zeros_like(image_gray)
+orientation_mask4 = np.zeros_like(image_gray)
+orientation = 180 * np.arctan2(row_iter - half_size, col_iter - half_size)/np.pi + 180
+idx_orientation_larger =  orientation < theta + delta_theta
+idx_orientation_lesser =  orientation > theta - delta_theta
+idx_orientation_1=np.bitwise_and(idx_orientation_larger,idx_orientation_lesser)
+idx_orientation_larger =  orientation < theta + 180 + delta_theta
+idx_orientation_lesser =  orientation > theta + 180 - delta_theta
+idx_orientation_2=np.bitwise_and(idx_orientation_larger,idx_orientation_lesser)
+idx_orientation_larger =  orientation < theta2 + delta_theta2
+idx_orientation_lesser =  orientation > theta2 - delta_theta2
+idx_orientation_3=np.bitwise_and(idx_orientation_larger,idx_orientation_lesser)
+idx_orientation_larger =  orientation < theta2 + 180 + delta_theta2
+idx_orientation_lesser =  orientation > theta2 + 180 - delta_theta2
+idx_orientation_4=np.bitwise_and(idx_orientation_larger,idx_orientation_lesser)
+idx_orientation_larger =  orientation < theta3 + delta_theta3
+idx_orientation_lesser =  orientation > theta3 - delta_theta3
+idx_orientation_5=np.bitwise_and(idx_orientation_larger,idx_orientation_lesser)
+idx_orientation_larger =  orientation < theta3 + 180 + delta_theta3
+idx_orientation_lesser =  orientation > theta3 + 180 - delta_theta3
+idx_orientation_6=np.bitwise_and(idx_orientation_larger,idx_orientation_lesser)
+idx_orientation_larger =  orientation < theta4 + delta_theta4
+idx_orientation_lesser =  orientation > theta4 - delta_theta4
+idx_orientation_7=np.bitwise_and(idx_orientation_larger,idx_orientation_lesser)
+idx_orientation_larger =  orientation < theta4 + 180 + delta_theta4
+idx_orientation_lesser =  orientation > theta4 + 180 - delta_theta4
+idx_orientation_8=np.bitwise_and(idx_orientation_larger,idx_orientation_lesser)
+#unir componentes de orientacion
+idx_orientation=np.bitwise_or(idx_orientation_1,idx_orientation_2)
+idx_orientation__2=np.bitwise_or(idx_orientation_3,idx_orientation_4)
+idx_orientation__3=np.bitwise_or(idx_orientation_5,idx_orientation_6)
+idx_orientation__4=np.bitwise_or(idx_orientation_7,idx_orientation_8)
+orientation_mask[idx_orientation] = 1
+orientation_mask2[idx_orientation__2] = 1
+orientation_mask3[idx_orientation__3] = 1
+orientation_mask4[idx_orientation__4] = 1
+orientation_mask[int(half_size),int(half_size)] = 1
+orientation_mask2[int(half_size),int(half_size)] = 1
+orientation_mask3[int(half_size),int(half_size)] = 1
+orientation_mask4[int(half_size),int(half_size)] = 1
+
+    # filtering via FFT y sintetizacion
+mask = (orientation_mask.astype(np.float)+orientation_mask2.astype(np.float)+orientation_mask3.astype(np.float)+orientation_mask4.astype(np.float))/4
+fft_filtered = image_gray_fft_shift * mask
+image_filtered = np.fft.ifft2(np.fft.fftshift(fft_filtered))
+image_filtered = np.absolute(image_filtered)
+image_filtered /= np.max(image_filtered)
+    # mostrar imagen
+cv2.imshow("Original image", image)
+cv2.imshow("Filter frequency response", 255 * mask)
+cv2.imshow("Filtered image", image_filtered)
+cv2.waitKey(0)
