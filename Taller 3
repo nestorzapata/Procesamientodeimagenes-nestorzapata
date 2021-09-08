@@ -1,1 +1,127 @@
 #Autor-Nestor Javier Zapata Sanchez
+import cv2
+import numpy as np
+#PUNTO 1
+#Lectura de la imagen y factor D
+# D=int(input("por favor ingrese el factor para diezmar"))
+# image = cv2.imread(r"C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/huellas/01/01_2.tif")
+# image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# image_gray_fft = np.fft.fft2(image_gray)
+# image_gray_fft_shift = np.fft.fftshift(image_gray_fft)
+#
+# # pre-computations
+# num_rows, num_cols = (image_gray.shape[0], image_gray.shape[1])
+# enum_rows = np.linspace(0, num_rows - 1, num_rows)
+# enum_cols = np.linspace(0, num_cols - 1, num_cols)
+# col_iter, row_iter = np.meshgrid(enum_cols, enum_rows)
+# half_size = num_rows / 2 - 1
+#
+# # low pass filter mask
+# low_pass_mask = np.zeros_like(image_gray)
+# freq_cut_off = 1/D  # it should less than 1
+# radius_cut_off = int(freq_cut_off * half_size)
+# idx_lp = np.sqrt((col_iter - half_size) ** 2 + (row_iter - half_size) ** 2) < radius_cut_off
+# low_pass_mask[idx_lp] = 1
+#
+# # Filtrado FFT
+# mask = low_pass_mask
+# fft_filtered = image_gray_fft_shift * mask
+# image_filtered = np.fft.ifft2(np.fft.fftshift(fft_filtered))
+# image_filtered = np.absolute(image_filtered)
+# image_filtered /= np.max(image_filtered)
+#
+# #imagen diezmada
+# image_decimated = image_filtered[::D, ::D]
+#
+# # mostrar imagenes
+# cv2.imshow("Imagen Original", image)
+# cv2.imshow("Imagen Diezmada", image_decimated)
+# cv2.waitKey(0)
+
+#PUNTO 2
+#lectura de imagen y parametro L
+# L=int(input("por favor ingrese factor parametro de interpolacion"))
+# image = cv2.imread(r"C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/huellas/01/01_2.tif")
+# image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+# #inserts zeros
+# rows, cols = image_gray.shape
+# num_of_zeros = L- 1
+# image_zeros = np.zeros((num_of_zeros * rows, num_of_zeros * cols), dtype=image_gray.dtype)
+# image_zeros[::num_of_zeros, ::num_of_zeros] = image_gray
+# W = 2 * num_of_zeros + 1
+#
+# # filtering
+# image_interpolated = cv2.GaussianBlur(image_zeros, (W, W), 1.0)
+# image_interpolated *= num_of_zeros ** 2
+#
+# image_gray_fft = np.fft.fft2(image_interpolated)
+# image_gray_fft_shift = np.fft.fftshift(image_gray_fft)
+# # pre-computations
+# num_rows, num_cols = (image_gray.shape[0], image_gray.shape[1])
+# enum_rows = np.linspace(0, num_rows - 1, num_rows)
+# enum_cols = np.linspace(0, num_cols - 1, num_cols)
+# col_iter, row_iter = np.meshgrid(enum_cols, enum_rows)
+# half_size = num_rows / 100 - 1
+#
+# # Filtro pasa bajas
+# low_pass_mask = np.zeros_like(image_gray)
+# freq_cut_off = 1/L  # it should less than 1
+# radius_cut_off = int(freq_cut_off * half_size)
+# idx_lp = np.sqrt((col_iter - half_size) ** 2 + (row_iter - half_size) ** 2) < radius_cut_off
+# low_pass_mask[idx_lp] = 1
+# #
+# # # Filtrado FFT
+# mask = low_pass_mask
+# fft_filtered = image_gray_fft_shift * mask
+# image_filtered = np.fft.ifft2(np.fft.fftshift(fft_filtered))
+# image_filtered = np.absolute(image_filtered)
+# image_filtered /= np.max(image_filtered)
+#
+#     # mostrar imagenes
+# cv2.imshow("Imagen Original", image)
+# cv2.imshow("Imagen interpolada",image_interpolated )
+# cv2.waitKey(0)
+
+#PUNTO 3 y 4
+image = cv2.imread(r"C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/lena.png")
+image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+H=([-1,0,1],[-2,0,2],[-1,0,1])
+V=([1,2,1],[0,0,0],[-1,-2,-1])
+D=([2,-1,-2],[-1,4,-1],[-2,-1,2])
+L=([1/16,1/8,1/16],[1/8,1/4,1/8],[1/16,1/8,1/16])
+kernel1=np.asarray(H)
+kernel2=np.asarray(V)
+kernel3=np.asarray(D)
+kernel4=np.asarray(L)
+dst1 = cv2.filter2D(image, -1, kernel1)
+dst2 = cv2.filter2D(image, -1, kernel2)
+dst3= cv2.filter2D(image, -1, kernel3)
+dst4= cv2.filter2D(image, -1, kernel4)
+cv2.imshow("Imagen Original", image)
+cv2.imshow("Imagen kernel1",dst1 )
+cv2.imshow("Imagen kernel2",dst2 )
+cv2.imshow("Imagen kernel3",dst3 )
+cv2.imshow("Imagen kernel4",dst4 )
+D = 2
+image_decimated = dst1[::D, ::D]
+image_decimated2 = dst2[::D, ::D]
+image_decimated3= dst3[::D, ::D]
+image_decimated4 = dst4[::D, ::D]
+#Imagenes diezmadas
+cv2.imshow("Imagen diezmada1",image_decimated)
+cv2.imshow("Imagen diezmada2",image_decimated2)
+cv2.imshow("Imagen diezmada3",image_decimated3)
+cv2.imshow("Imagen diezmada4",image_decimated4)
+
+#imagen Il
+IL=image_decimated4
+dstil1= cv2.filter2D(IL, -1, kernel4)
+cv2.imshow("Imagen IL", dstil1)
+
+#Intepolación
+width = 1024
+height = 1024
+image_resized = cv2.resize(dstil1, (width, height))
+cv2.imshow("Imagen Final Lena",dstil1)
+
+cv2.waitKey(0)
