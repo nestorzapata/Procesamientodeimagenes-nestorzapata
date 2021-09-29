@@ -1,0 +1,60 @@
+import cv2
+import numpy as np
+import sys
+import os
+#Estudiante:Nestor Zapata
+#Punto 1
+archivo=int(input("Por favor ingrese valor del tamaño de la imagen"))#Lectura tamaño de la imagen
+r= (archivo)%2  #Reviso si el tamaño es par o impar
+if r ==0:
+    print("image correcta")
+    img = np.zeros((archivo,archivo,3), np.uint8)#Ingreso el tamañano de la imagen
+    point_color= (127,9,255)#Color del borde del poligono
+    espesor=4
+    point1=np.random.randint(1,(archivo/2))#De forma aleatoria genero los vertices del poligono
+    point2 = np.random.randint(1, (archivo/2))
+    point3=np.random.randint(1, (archivo/2))
+    point4=np.random.randint((archivo/2), archivo)
+    point5 = np.random.randint((archivo/2),archivo)
+    point6 = np.random.randint((archivo/2), archivo)
+    point7 = np.random.randint((archivo/2), archivo)
+    point8 = np.random.randint(1, (archivo/2))
+    cv2.line(img, (point1, point2), (point3,point4), point_color, espesor)# Uno los vertices para cerrar la figura geometrica
+    cv2.line(img, (point3, point4), (point5,point6), point_color, espesor)
+    cv2.line(img, (point5, point6), (point7,point8), point_color, espesor)
+    cv2.line(img, (point7, point8), (point1,point2), point_color, espesor)
+    area1 = np.array([[point1, point2], [point3, point4], [point5, point6], [point7, point8]])
+    cv2.fillPoly(img,[area1],(127,9,255))#Relleno el poligono de color Magenta
+    negro=np.array([0,0,0])
+    maskcian=cv2.inRange(img,negro,negro)
+    img_mask = np.copy(img)
+    color1=[255,255,0]
+    img_mask[maskcian!=0]=color1
+    cv2.imshow("Poligonoe", img_mask)#Imagen Final
+    cv2.waitKey(0)
+else:
+    print("imagen incorrecta")#con esto descarto la imagen si el tamaño es impar
+#Punto 2
+# def find_peaks(accumulator, nhood, accumulator_threshold, N_peaks):
+#         done = False
+#         acc_copy = accumulator
+#         nhood_center = [(nhood[0] - 1) / 2, (nhood[1] - 1) / 2]
+#         peaks = []
+#         while not done:
+#             [p, q] = np.unravel_index(acc_copy.argmax(), acc_copy.shape)
+#             if acc_copy[p, q] >= accumulator_threshold:
+#                 peaks.append([p, q])
+#                 p1 = p - nhood_center[0]
+#                 p2 = p + nhood_center[0]
+#                 q1 = q - nhood_center[1]
+#                 q2 = q + nhood_center[1]
+# 
+#                 [qq, pp] = np.meshgrid(np.arange(np.max([q1, 0]), np.min([q2, acc_copy.shape[1] - 1]) + 1, 1), \
+#                                        np.arange(np.max([p1, 0]), np.min([p2, acc_copy.shape[0] - 1]) + 1, 1))
+#                 pp = np.array(pp.flatten(), dtype=np.intp)
+#                 qq = np.array(qq.flatten(), dtype=np.intp)
+# 
+#                 acc_copy[pp, qq] = 0
+#                 done = np.array(peaks).shape[0] == N_peaks
+#             else:
+#                 done = True
