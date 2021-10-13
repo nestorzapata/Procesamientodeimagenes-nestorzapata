@@ -1,0 +1,25 @@
+#Estudiante:Nestor Zapata
+#Taller 5
+
+import cv2
+import numpy as np
+import sys
+import os
+input_images_path="C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/Imagenestcinco"#Aca leo la ruta
+files_names=os.listdir(input_images_path)#enlisto en un directorio
+print(files_names)#Verificanción del directorio
+
+for file_name in files_names:
+    image_path = input_images_path + "/" + file_name #para cada archivo con el fin de visualizarla
+    print(image_path)# Visualizo la ruta d ela imagen que lei
+    image = cv2.imread(image_path)# Se lee la ruta de la imagenes
+    #cv2.imshow("Image", image)#Se muestran las imagenes
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+numer_files=len(files_names)#Numero de archivos en la ruta
+print("Cual de las",numer_files, "imagenes de referencia desea utilizar")
+Ne=int(input())
+if Ne < 1 or Ne>numer_files:
+    print("La imagen no existe")
+
+cv2.destroyAllWindows()yyyy
