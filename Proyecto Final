@@ -1,3 +1,8 @@
+import cv2
+import sys
+import os
+import numpy as np
+
 #Nestor Zapata
 #proyecto Final
 input_images_path="C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/Imag"#Aca leo la ruta
@@ -6,7 +11,7 @@ print(files_names)#Verificanción del directorio
 
 for file_name in files_names:
     image_path = input_images_path + "/" + file_name #para cada archivo con el fin de visualizarla
-    print(image_path)# Visualizo la ruta d ela imagen que lei
+    print(image_path)# Visualizo la ruta de la imagen que lei
     image = cv2.imread(image_path)# Se lee la ruta de la imagenes
     width = 512
     height = 512
@@ -46,9 +51,9 @@ for file_name in files_names:
 # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2 * W + 1, 2 * W + 1))
 # mask_dilated = cv2.morphologyEx(mask_eroded, cv2.MORPH_CLOSE, kernel)
 
-    cv2.imshow("planta", mask_planta)
-    cv2.imshow("Muermo", mask_muermo)
-    cv2.imshow("Original image", image)
+    cv2.imshow("planta", mask_planta)#muestro la planta
+    cv2.imshow("Muermo", mask_muermo)#muesro la enfermedad
+    cv2.imshow("Original image", image)#muestro la imagen original
     cv2.imshow("Imagen grises", image_gray)
     cv2.imshow("Filtered image", image_hsv)
     cv2.waitKey(0)
