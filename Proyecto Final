@@ -1,41 +1,44 @@
-import cv2
-import sys
-import os
-import numpy as np
 #Nestor Zapata
 #proyecto Final
+input_images_path="C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/Imag"#Aca leo la ruta
+files_names=os.listdir(input_images_path)#enlisto en un directorio
+print(files_names)#Verificanción del directorio
 
-image = cv2.imread(r"C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/Imag/20211024_114858.jpg")#Imagen
-width = 512
-height = 512
-image = cv2.resize(image, (width, height))#redimensionamiento
-image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)#imagen en gris
-image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)#imagen en HSV
-image_YCrCb = cv2.cvtColor(image, cv2.COLOR_BGR2YCR_CB)
+for file_name in files_names:
+    image_path = input_images_path + "/" + file_name #para cada archivo con el fin de visualizarla
+    print(image_path)# Visualizo la ruta d ela imagen que lei
+    image = cv2.imread(image_path)# Se lee la ruta de la imagenes
+    width = 512
+    height = 512
+    image = cv2.resize(image, (width, height))#redimensionamiento
+    image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)#imagen en gris
+    image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)#imagen en HSV
+    image_YCrCb = cv2.cvtColor(image, cv2.COLOR_BGR2YCR_CB)
 
-ret, Ibw_Cb = cv2.threshold(image_YCrCb[..., 2], 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-hist = cv2.calcHist([image_hsv], [0], Ibw_Cb, [180], [0, 180])
+    ret, Ibw_Cb = cv2.threshold(image_YCrCb[..., 2], 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    hist = cv2.calcHist([image_hsv], [0], Ibw_Cb, [180], [0, 180])
 
-# Hue histogram max and location of max
-max_val = hist.max()
-max_pos = int(hist.argmax())
-min_val = hist.min()
-min_pos = int(hist.argmin())
+    # Hue histogram max and location of max
+    max_val = hist.max()
+    max_pos = int(hist.argmax())
+    min_val = hist.min()
+    min_pos = int(hist.argmin())
 
-# planta
-lim_inf = (max_pos - 10, 50, 50)
-lim_sup = (max_pos + 10,255, 255)
-mask_planta = cv2.inRange(image_hsv, lim_inf, lim_sup)#filtrado planta
+    # planta
+    lim_inf = (max_pos - 10, 50, 50)
+    lim_sup = (max_pos + 10,255, 255)
+    mask_planta = cv2.inRange(image_hsv, lim_inf, lim_sup)#filtrado planta
 
-lim_infmuermo = (min_pos, 0, 0)
-lim_supmuermo = (min_pos + 10,100, 230)
-mask_muermo = cv2.inRange(image_hsv, lim_infmuermo, lim_supmuermo)#filtrado enfermedad
+    #muermo rojo
+    lim_infmuermo = (min_pos, 0, 0)
+    lim_supmuermo = (min_pos + 10,100, 230)
+    mask_muermo = cv2.inRange(image_hsv, lim_infmuermo, lim_supmuermo)#filtrado enfermedad
 
 # # mask
 # ret, Ibw_sat = cv2.threshold(image_hsv[..., 1], 50, 255, cv2.THRESH_BINARY)
 # mask = cv2.bitwise_and(mask_planta, Ibw_sat)
 # mask_ = np.logical_and(mask_planta, Ibw_sat)
-# 
+#
 # W = 1
 # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2 * W + 1, 2 * W + 1))
 # mask_eroded = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
@@ -43,9 +46,9 @@ mask_muermo = cv2.inRange(image_hsv, lim_infmuermo, lim_supmuermo)#filtrado enfe
 # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2 * W + 1, 2 * W + 1))
 # mask_dilated = cv2.morphologyEx(mask_eroded, cv2.MORPH_CLOSE, kernel)
 
-cv2.imshow("planta", mask_planta)
-cv2.imshow("Muermo", mask_muermo)
-cv2.imshow("Original image", image)
-cv2.imshow("Imagen grises", image_gray)
-#cv2.imshow("Filtered image", image_filtered)
-cv2.waitKey(0)
+    cv2.imshow("planta", mask_planta)
+    cv2.imshow("Muermo", mask_muermo)
+    cv2.imshow("Original image", image)
+    cv2.imshow("Imagen grises", image_gray)
+    cv2.imshow("Filtered image", image_hsv)
+    cv2.waitKey(0)
