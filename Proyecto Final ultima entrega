@@ -1,0 +1,72 @@
+import cv2
+import sys
+import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+#Nestor Zapata
+#proyecto Final
+input_images_path="C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/Imag"#Aca leo la ruta
+files_names=os.listdir(input_images_path)#enlisto en un directorio
+print(files_names)#Verificanción del directorio
+tamano=len(files_names)
+print(tamano)#cantidad de imagenes
+lista = []
+listamuermo = []
+
+for file_name in files_names:
+    image_path = input_images_path + "/" + file_name #para cada archivo con el fin de visualizarla
+    print(image_path)# Visualizo la ruta d ela imagen que lei
+    image = cv2.imread(image_path)# Se lee la ruta de la imagenes
+    width = 512
+    height = 512
+    image = cv2.resize(image, (width, height))#redimensionamiento
+    image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)#imagen en gris
+    image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)#imagen en HSV
+    image_YCrCb = cv2.cvtColor(image, cv2.COLOR_BGR2YCR_CB)
+
+    ret, Ibw_Cb = cv2.threshold(image_YCrCb[..., 2], 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    hist = cv2.calcHist([image_hsv], [0], Ibw_Cb, [180], [0, 180])
+
+
+    # Hue histogram max and location of max
+    max_val = hist.max()
+    max_pos = int(hist.argmax())
+    min_val = hist.min()
+    min_pos = int(hist.argmin())
+
+    # planta
+    lim_inf = (max_pos - 10, 50, 50)
+    lim_sup = (max_pos + 10,255, 255)
+    mask_planta = cv2.inRange(image_hsv, lim_inf, lim_sup)#filtrado planta
+    planta_filtrada=cv2.medianBlur(mask_planta,3)
+    n_pixeles_planta=np.sum(planta_filtrada==255)
+    print("Numero de pixeles",n_pixeles_planta)
+    lista.append(n_pixeles_planta)
+
+    #muermo rojo
+    lim_infmuermo = (min_pos, 0, 0)
+    lim_supmuermo = (min_pos + 10,100, 230)
+    mask_muermo = cv2.inRange(image_hsv, lim_infmuermo, lim_supmuermo)#filtrado enfermedad
+    muermofiltrado = cv2.medianBlur(mask_muermo, 3)
+    n_pixeles_muermo = np.sum(muermofiltrado == 255)
+    print("Numero de pixeles muermo", n_pixeles_muermo)
+    listamuermo.append(n_pixeles_muermo)
+    cv2.imshow("planta", mask_planta)
+    cv2.imshow("plantafiltrada",planta_filtrada)
+    #cv2.imshow("Muermo", mask_muermo)
+    cv2.imshow("Original image", image)
+    #cv2.imshow("Imagen grises", image_gray)
+    cv2.imshow("enfermedades ", muermofiltrado)
+    cv2.imshow("Filtered image", image_hsv)
+print(lista)
+print(listamuermo)
+x=np.arange(1,(tamano+1),1)
+y=lista
+y2=listamuermo
+plt.plot(x,y)
+plt.show()
+plt.plot(x,y2)
+plt.show()
+cv2.waitKey(0)
