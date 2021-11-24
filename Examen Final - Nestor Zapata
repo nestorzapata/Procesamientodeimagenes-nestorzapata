@@ -1,0 +1,90 @@
+import cv2
+import sys
+import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+#Nestor Zapata
+#Punto 1
+
+# image = cv2.imread(r"C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/soccer_game.png")
+# width = 512
+# height = 512
+# image = cv2.resize(image, (width, height))#redimensionamiento
+# image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)#imagen en gris
+# image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)#imagen en HSV
+# image_YCrCb = cv2.cvtColor(image, cv2.COLOR_BGR2YCR_CB)
+#
+# ret, Ibw_Cb = cv2.threshold(image_YCrCb[..., 2], 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+# hist = cv2.calcHist([image_hsv], [0], Ibw_Cb, [180], [0, 180])
+#
+# # Hue histogram max and location of max
+# max_val = hist.max()
+# max_pos = int(hist.argmax())
+# min_val = hist.min()
+# min_pos = int(hist.argmin())
+#
+# # cesped
+# lim_inf = (max_pos - 10, 50, 50)
+# lim_sup = (max_pos + 10, 255, 255)
+# mask_cesped = cv2.inRange(image_hsv, lim_inf, lim_sup)  # filtrado cesped
+# n_pixeles_cesped = np.sum(mask_cesped == 255)
+# no_pixeles_cesped = np.sum(mask_cesped == 0)
+# pixeles=n_pixeles_cesped+no_pixeles_cesped
+# porcentaje=(n_pixeles_cesped/pixeles)*100
+# print("Numero de pixeles cesped", n_pixeles_cesped)
+# print("Numero de pixeles nocesped", no_pixeles_cesped)
+# print("% PIXELES", porcentaje)
+#
+# cv2.imshow("cesped", mask_cesped)
+# cv2.waitKey(0)
+
+#Punto 2
+# image = cv2.imread(r"C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/soccer_game.png")
+# width = 512
+# height = 512
+# image = cv2.resize(image, (width, height))#redimensionamiento
+# image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)#imagen en gris
+# image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)#imagen en HSV
+# image_YCrCb = cv2.cvtColor(image, cv2.COLOR_BGR2YCR_CB)
+# #
+# ret, Ibw_Cb = cv2.threshold(image_YCrCb[..., 2], 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+# hist = cv2.calcHist([image_hsv], [0], Ibw_Cb, [180], [0, 180])
+#
+# # Hue histogram max and location of max
+# max_val = hist.max()
+# max_pos = int(hist.argmax())
+# min_val = hist.min()
+# min_pos = int(hist.argmin())
+# #
+# # # cesped
+# lim_inf = (max_pos - 10, 50, 50)
+# lim_sup = (max_pos + 10, 255, 255)
+# mask_cesped = cv2.inRange(image_hsv, lim_inf, lim_sup)
+# bordes= cv2.Canny(mask_cesped,100,110)
+# ret, Ibw_shapes = cv2.threshold(image_gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+# contours,hierarchy = cv2.findContours(bordes, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+# #cv2.drawContours(image, contours, -1, (0,255,255))
+# for c in contours:
+#     per=cv2.arcLength(c,True)
+#     approx=cv2.approxPolyDP(c,0.9*per,True)
+#     cv2.drawContours(image, [contours[0]], -1, (0, 255, 0),10)
+#     if len(approx)==15:
+#         screen=approx;
+#
+# print("Numero de jugadores",len(contours))
+#
+# cv2.imshow("Image", image)
+# cv2.imshow("bordes", bordes)
+# cv2.waitKey(0)
+
+#Punto 3
+image = cv2.imread(r"C:/Users/javi_/Documents/MAESTRIA JAVERIANA/Procesamiento de Imagenes y video/Images/soccer_game.png")
+width = 512
+height = 512
+image = cv2.resize(image, (width, height))#redimensionamiento
+cv2.line(image,(0,0),(511,511),(255,0,0),3)
+
+cv2.imshow("Image", image)
+cv2.waitKey(0)
